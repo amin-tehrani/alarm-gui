@@ -31,12 +31,19 @@ var (
 	backgroundPath  string
 	snoozeDuration  time.Duration
 	timeoutDuration time.Duration
+	showVersion     bool
 )
+
+const AppVersion = "0.1.0"
 
 func main() {
 	parseFlags()
 
-	// 1. Setup Timeout
+	if showVersion {
+		fmt.Printf("Alarm App version %s\n", AppVersion)
+		os.Exit(0)
+	}
+
 	setupTimeout()
 
 	// 2. Setup Audio
@@ -61,6 +68,8 @@ func parseFlags() {
 
 	flag.DurationVar(&timeoutDuration, "timeout", 1*time.Minute, "Timeout duration")
 	flag.DurationVar(&timeoutDuration, "t", 1*time.Minute, "Timeout duration (short)")
+	flag.BoolVar(&showVersion, "version", false, "Show version information")
+	flag.BoolVar(&showVersion, "v", false, "Show version information (short)")
 
 	flag.Parse()
 }
