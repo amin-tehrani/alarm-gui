@@ -34,7 +34,7 @@ var (
 	showVersion     bool
 )
 
-const AppVersion = "0.1.0"
+const AppVersion = "0.1.1"
 
 func main() {
 	parseFlags()
