@@ -1,3 +1,8 @@
+## 0.1.4 (February 02, 2026)
+- Updated VERSION, Updated CHANGELOG.md, Bumped 0.1.3 –> 0.1.4
+- feat: Add singleton instance protection
+- feat: Add custom alarm title and text display, implement CI/CD workflows, and rename the executable to `alarm-gui`.
+
 ## 0.1.3 (February 02, 2026)
 - Updated VERSION, Updated CHANGELOG.md, Bumped 0.1.2 –> 0.1.3
 - change pkgbuild
