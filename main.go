@@ -314,7 +314,10 @@ func streamVideo(path string) fyne.CanvasObject {
 			if err != nil {
 				break
 			}
-			raster.Refresh()
+			// Thread-safe refresh
+			fyne.Do(func() {
+				raster.Refresh()
+			})
 		}
 	}()
 
@@ -458,8 +461,11 @@ func (c *bigClock) CreateRenderer() fyne.WidgetRenderer {
 	go func() {
 		t := time.NewTicker(1 * time.Second)
 		for range t.C {
-			text.Text = time.Now().Format("15:04")
-			text.Refresh()
+			// Thread-safe update
+			fyne.Do(func() {
+				text.Text = time.Now().Format("15:04")
+				text.Refresh()
+			})
 		}
 	}()
 
