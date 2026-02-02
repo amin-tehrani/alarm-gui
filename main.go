@@ -22,7 +22,7 @@ import (
 	"github.com/gopxl/beep/wav"
 )
 
-//go:embed default_ringtone.mp3 default_bg.mp4
+//go:embed default_ringtone.mp3 default_bg.jpeg
 var embedFS embed.FS
 
 // Flags
@@ -253,7 +253,7 @@ func setupBackground(path string) fyne.CanvasObject {
 		// We must extract it to a file for ffmpeg to read it efficiently (or stream via stdin? No, we use stdin for output)
 		// Actually typical ffmpeg usage needs a file or we stream INTO ffmpeg via stdin.
 		// Writing to temp file is safer and easiest for ffmpeg input.
-		tmpPath := extractAsset("default_bg.mp4")
+		tmpPath := extractAsset("default_bg.jpeg")
 		if tmpPath != "" {
 			usedPath = tmpPath
 			// Note: We are creating a temp file that is not explicitly deleted on exit.
