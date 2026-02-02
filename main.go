@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -59,6 +60,30 @@ func main() {
 	if showVersion {
 		fmt.Printf("Alarm GUI version %s\n", AppVersion)
 		os.Exit(0)
+	}
+
+	// Singleton Lock
+	lockDir := os.TempDir()
+	lockPath := strings.ReplaceAll(os.Args[0], "/", "_") + ".lock"
+	// Clean up path slightly to avoid weird filenames if args[0] is complex
+	if idx := strings.LastIndex(os.Args[0], "/"); idx != -1 {
+		lockPath = os.Args[0][idx+1:] + ".lock"
+	}
+	lockFile := lockDir + "/" + lockPath
+
+	fLock, err := os.Create(lockFile)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create lock file: %v\n", err)
+	} else {
+		defer fLock.Close()
+		// Try to lock. This blocks if another process has the lock.
+		// syscall.LOCK_EX: Exclusive lock
+		// syscall.LOCK_NB: Non-blocking (not used, so we wait)
+		if err := syscall.Flock(int(fLock.Fd()), syscall.LOCK_EX); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to lock file: %v\n", err)
+		} else {
+			defer syscall.Flock(int(fLock.Fd()), syscall.LOCK_UN)
+		}
 	}
 
 	args := flag.Args()
@@ -285,7 +310,7 @@ func setupUI(audio *audioControl) {
 
 	content := container.NewBorder(nil, paddedControls, nil, nil, paddedClock)
 
-	finalLayout := container.NewMax(bgObj, content)
+	finalLayout := container.NewStack(bgObj, content)
 
 	w.SetContent(finalLayout)
 	w.ShowAndRun()
