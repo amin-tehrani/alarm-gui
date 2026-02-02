@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0 # Important for pkgver() to count commits correctly
 
       - name: Publish to AUR
-        uses: KSXPC/github-action-deploy-aur@v3
+        uses: KSXGitHub/github-actions-deploy-aur@v2.2.5
         with:
           pkgname: alarm-gui-git
           pkgbuild: ./PKGBUILD
