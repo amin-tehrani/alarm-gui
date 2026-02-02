@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -22,7 +23,7 @@ import (
 	"github.com/gopxl/beep/wav"
 )
 
-//go:embed default_ringtone.mp3 default_bg.jpeg
+//go:embed default_ringtone.mp3 default_bg.jpeg VERSION
 var embedFS embed.FS
 
 // Flags
@@ -34,7 +35,21 @@ var (
 	showVersion     bool
 )
 
-const AppVersion = "0.1.1"
+var AppVersion string
+
+func init() {
+	f, err := embedFS.Open("VERSION")
+	if err != nil {
+		AppVersion = "unknown"
+		return
+	}
+	defer f.Close()
+	if fContent, err := io.ReadAll(f); err != nil {
+		AppVersion = "unknown"
+	} else {
+		AppVersion = strings.TrimSpace(string(fContent))
+	}
+}
 
 func main() {
 	parseFlags()
