@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"image"
 	"image/color"
+	"io"
 	"os"
+	"os/exec"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -120,14 +123,8 @@ func setupUI(audio *audioControl) {
 	w.SetFullScreen(true)
 
 	// Background
-	var bgObj fyne.CanvasObject
-	if backgroundPath != "" {
-		img := canvas.NewImageFromFile(backgroundPath)
-		img.FillMode = canvas.ImageFillContain
-		bgObj = img
-	} else {
-		bgObj = canvas.NewRectangle(color.Black)
-	}
+	// Background
+	bgObj := setupBackground(backgroundPath)
 
 	// Digital Clock
 	// Use Data Binding for thread-safe updates from goroutine
@@ -198,4 +195,76 @@ func setupUI(audio *audioControl) {
 
 	w.SetContent(finalLayout)
 	w.ShowAndRun()
+}
+
+func setupBackground(path string) fyne.CanvasObject {
+	if path == "" {
+		return canvas.NewRectangle(color.Black)
+	}
+
+	// Check extension
+	ext := ""
+	if len(path) > 4 {
+		ext = path[len(path)-4:]
+	}
+	// Simple check, can be more robust
+	if ext == ".mp4" || ext == ".mkv" || path[len(path)-5:] == ".webm" {
+		return streamVideo(path)
+	}
+
+	img := canvas.NewImageFromFile(path)
+	img.FillMode = canvas.ImageFillContain
+	return img
+}
+
+func streamVideo(path string) fyne.CanvasObject {
+	// Fixed internal resolution for processing
+	const w, h = 1280, 720
+
+	// Create a raster that will hold the current frame
+	// frameSize := w * h * 4 // RGBA
+
+	// Start ffmpeg
+	cmd := exec.Command("ffmpeg",
+		"-stream_loop", "-1",
+		"-i", path,
+		"-f", "image2pipe",
+		"-pix_fmt", "rgba",
+		"-vcodec", "rawvideo",
+		"-s", fmt.Sprintf("%dx%d", w, h),
+		"-",
+	)
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "FFmpeg stdout error: %v\n", err)
+		return canvas.NewRectangle(color.Black)
+	}
+
+	if err := cmd.Start(); err != nil {
+		fmt.Fprintf(os.Stderr, "FFmpeg start error: %v\n", err)
+		return canvas.NewRectangle(color.Black)
+	}
+
+	// Image to hold data
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+
+	raster := canvas.NewRaster(func(rw, rh int) image.Image {
+		return img
+	})
+
+	// Goroutine to read frames
+	go func() {
+		defer cmd.Process.Kill()
+		for {
+			// Read exactly frameSize bytes
+			_, err := io.ReadFull(stdout, img.Pix)
+			if err != nil {
+				break
+			}
+			raster.Refresh()
+		}
+	}()
+
+	return raster
 }
