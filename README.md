@@ -54,17 +54,17 @@ go build -o alarm-gui main.go
 
 **Run with defaults (Embedded video & tone):**
 ```bash
-./alarm
+./alarm-gui
 ```
 
 **Custom video and ringtone:**
 ```bash
-./alarm -b ~/Videos/loops/rain.mp4 -r ~/Music/alarm.mp3
+./alarm-gui -b ~/Videos/loops/rain.mp4 -r ~/Music/alarm.mp3
 ```
 
 **Set custom snooze and timeout:**
 ```bash
-./alarm --snooze 10m --timeout 30s
+./alarm-gui --snooze 10m --timeout 30s
 ```
 
 ## Output

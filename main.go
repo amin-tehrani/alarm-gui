@@ -33,6 +33,8 @@ var (
 	snoozeDuration  time.Duration
 	timeoutDuration time.Duration
 	showVersion     bool
+	alarmTitle      string
+	alarmText       string
 )
 
 var AppVersion string
@@ -57,6 +59,14 @@ func main() {
 	if showVersion {
 		fmt.Printf("Alarm GUI version %s\n", AppVersion)
 		os.Exit(0)
+	}
+
+	args := flag.Args()
+	if len(args) > 0 {
+		alarmTitle = args[0]
+	}
+	if len(args) > 1 {
+		alarmText = args[1]
 	}
 
 	setupTimeout()
@@ -216,11 +226,31 @@ func setupUI(audio *audioControl) {
 
 	// Layout Containers
 	// Clock Container (Glass)
+	// Clock Container (Glass)
 	clockWidget := newBigClock()
+
+	clockContent := container.NewVBox()
+
+	if alarmTitle != "" {
+		t := canvas.NewText(alarmTitle, color.White)
+		t.TextSize = 64
+		t.TextStyle = fyne.TextStyle{Bold: true}
+		t.Alignment = fyne.TextAlignCenter
+		clockContent.Add(t)
+	}
+
+	clockContent.Add(container.NewCenter(clockWidget))
+
+	if alarmText != "" {
+		t := canvas.NewText(alarmText, color.White)
+		t.TextSize = 32
+		t.Alignment = fyne.TextAlignCenter
+		clockContent.Add(t)
+	}
 
 	clockPanel := container.NewStack(
 		newGlassPanel(),
-		container.NewCenter(clockWidget),
+		container.NewCenter(clockContent),
 	)
 
 	// Refined Controls Layout
