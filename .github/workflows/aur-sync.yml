@@ -1,0 +1,27 @@
+name: Update AUR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  aur-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important for pkgver() to count commits correctly
+
+      - name: Publish to AUR
+        uses: KSXPC/github-action-deploy-aur@v3
+        with:
+          pkgname: alarm-gui-git
+          pkgbuild: ./PKGBUILD
+          commit_username: ${{ github.actor }}
+          commit_email: ${{ secrets.AUR_EMAIL || 't.mohammadamin@gmail.com' }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          # This will automatically update .SRCINFO for you
+          commit_message: "Update to ${{ github.sha }}"
