@@ -69,7 +69,7 @@ func setupTimeout() {
 	if timeoutDuration > 0 {
 		go func() {
 			time.Sleep(timeoutDuration)
-			fmt.Println("err timeout")
+			fmt.Println("Timeout")
 			os.Exit(2)
 		}()
 	}
@@ -168,11 +168,11 @@ func setupUI(audio *audioControl) {
 	snoozeLabel.Alignment = fyne.TextAlignCenter
 
 	btnDismiss := newGlassButton("Dismiss", func() {
-		stopAndExit("canceled", 0)
+		stopAndExit("Dismissed", 0)
 	})
 
 	btnSnooze := newGlassButton("Snooze", func() {
-		stopAndExit(currentSnooze.String(), 0)
+		stopAndExit("Snoozed "+currentSnooze.String(), 0)
 	})
 
 	btnDecrease := newGlassButton("-", func() {
