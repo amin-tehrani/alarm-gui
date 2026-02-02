@@ -40,7 +40,7 @@ func main() {
 	parseFlags()
 
 	if showVersion {
-		fmt.Printf("Alarm App version %s\n", AppVersion)
+		fmt.Printf("Alarm GUI version %s\n", AppVersion)
 		os.Exit(0)
 	}
 

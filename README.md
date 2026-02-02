@@ -1,4 +1,4 @@
-# Go Alarm App
+# Alarm GUI
 
 A high-performance, CLI-driven, full-screen alarm application for Linux. Built with Go and Fyne, featuring a modern glassmorphism UI, video background support, and embedded assets.
 
@@ -24,20 +24,20 @@ A high-performance, CLI-driven, full-screen alarm application for Linux. Built w
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/alarm-app.git
-cd alarm-app
+git clone https://github.com/yourusername/alarm-gui.git
+cd alarm-gui
 
 # Run directly
 go run main.go
 
 # Build binary
-go build -o alarm main.go
+go build -o alarm-gui main.go
 ```
 
 ## Usage
 
 ```bash
-./alarm [flags]
+./alarm-gui [flags]
 ```
 
 ### Flags

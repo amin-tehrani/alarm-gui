@@ -1,4 +1,4 @@
-module alarm_app
+module alarm-gui
 
 go 1.25.6
 
