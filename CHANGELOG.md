@@ -1,3 +1,8 @@
+## 0.1.3 (February 02, 2026)
+- Updated VERSION, Updated CHANGELOG.md, Bumped 0.1.2 –> 0.1.3
+- change pkgbuild
+- refactor: externalize application version to an embedded file
+
 ## 0.1.2 (February 02, 2026)
 - Created VERSION, Created CHANGELOG.md, Bumped to 0.1.2
 - feat: Add `bump-version-v2.sh` for automated project versioning
